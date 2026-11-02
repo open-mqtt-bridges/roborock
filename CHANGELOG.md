@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0
+
+### Major Changes
+
+- [#39](https://github.com/tobiaswaelde/roborock-mqtt-bridge/pull/39) [`6451aa1`](https://github.com/tobiaswaelde/roborock-mqtt-bridge/commit/6451aa1bf874694a7129f0310c95716e180d07ef) Thanks [@tobiaswaelde](https://github.com/tobiaswaelde)! - Update stable dependencies and security fixes, and move development, CI, and application images to Node.js 26 LTS. Application container runtimes use Node.js 26; published library and VS Code host compatibility is preserved. TypeScript 7 builds use the TypeScript 6 compatibility API for lint and test tooling.
+
 ## 0.1.3
 
 ### Patch Changes
