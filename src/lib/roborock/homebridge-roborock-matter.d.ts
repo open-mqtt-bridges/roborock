@@ -35,8 +35,9 @@ declare module 'homebridge-roborock-matter/roborockLib/roborockAPI' {
     isInited(): boolean;
     sendTwoFactorEmail(): Promise<{ ok: boolean }>;
     setDeviceNotify(callback: (id: string, state: unknown) => void): void;
+    setReadyListener(listener: () => unknown): void;
     setStateAsync(id: string, state: RoborockState): Promise<void>;
-    startService(callback: () => void): Promise<void>;
+    startService(): Promise<void>;
     stopService(): Promise<void>;
     verifyTwoFactorCode(code: string): Promise<unknown>;
   }
