@@ -1,6 +1,6 @@
 {
   "name": "roborock-mqtt-bridge",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Roborock MQTT Bridge connects device APIs to MQTT.",
   "packageManager": "pnpm@11.28.9",

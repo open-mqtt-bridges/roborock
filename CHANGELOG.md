@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2
+
+### Patch Changes
+
+- [#52](https://github.com/open-mqtt-bridges/roborock/pull/52) [`1729d3d`](https://github.com/open-mqtt-bridges/roborock/commit/1729d3dd2f928be6df82e89ad8ee0095d6edf81a) Thanks [@tobiaswaelde](https://github.com/tobiaswaelde)! - Update compatible runtime dependencies and remediate vulnerable transitive tooling while preserving the existing MQTT and configuration contracts.
+
 ## 1.0.1
 
 ### Patch Changes
