@@ -113,9 +113,10 @@ export class Roborock extends HttpMqttBridge<RoborockConfig> {
     this.client = client;
     this.useMemoryOnlyState(client);
     client.setDeviceNotify((event, state) => this.handleClientEvent(client, event, state));
+    client.setReadyListener(() => this.handleConnected(client));
 
     try {
-      await client.startService(() => this.handleConnected(client));
+      await client.startService();
       if (!client.isInited()) {
         if (this.cfg.verificationCode) {
           await this.verifyTwoFactorCode(client, this.cfg.verificationCode);
@@ -232,7 +233,7 @@ export class Roborock extends HttpMqttBridge<RoborockConfig> {
 
   /** Marks the bridge as connected and publishes metadata for discovered devices. */
   private handleConnected(client: RoborockClient) {
-    if (this.destroyed || client !== this.client) return;
+    if (this.destroyed || client !== this.client || !client.isInited()) return;
 
     this.setConnected(true);
     this.publishHomeData(client, client.states.HomeData?.val);
@@ -462,7 +463,7 @@ export class Roborock extends HttpMqttBridge<RoborockConfig> {
   private async verifyTwoFactorCode(client: RoborockClient, code: string) {
     try {
       await client.verifyTwoFactorCode(code);
-      await client.startService(() => this.handleConnected(client));
+      await client.startService();
       this.setAuthenticationStatus(client.isInited() ? 'authenticated' : 'failed');
     } catch (error) {
       this.setAuthenticationStatus('failed');
@@ -528,7 +529,7 @@ export class Roborock extends HttpMqttBridge<RoborockConfig> {
 
   /** Publishes the bridge connection state. */
   private setConnected(connected: boolean) {
-    this.mqtt.publish(`${this.bridgeTopic}/connected`, connected);
+    this.mqtt.publish(`${this.bridgeTopic}/connected`, connected, { retain: true });
   }
 
   /** Publishes the current one-time-code authentication state. */

@@ -16,6 +16,12 @@ All topics are grouped by their owner. Sensitive keys are removed before state i
 <topic>/devices/<device-id>/command/suction_power
 ```
 
+`bridge/connected` is retained. Its payload is `false` at startup and graceful shutdown, and `true` when the
+active Roborock client reports successful initialization. New subscribers receive the latest published value.
+Readiness is observed through the client's ready listener, including successful internal startup retries.
+This value does not continuously monitor cloud or robot reachability and does not detect an abrupt process exit.
+Command publications remain non-retained.
+
 `state/json` contains the normalized, sanitized status object; the remaining `state/...` topics contain only its direct named scalar values. Arrays and nested objects are not expanded into numeric topic segments. Room data is available separately under `rooms`. Every documented numeric enum also receives a readable companion topic: for example, `state` is `2` and `state_human` is `Sleeping`. `suction_power` is a machine-readable level, while `suction_power_code_human` is its readable label.
 
 See [Enum values](./enum-values) for the documented status, error, suction, mop, water-level, and dock codes.

@@ -15,7 +15,7 @@ As a dashboard user, I need the connection indicator to reflect successful bridg
 
 **Acceptance Scenarios**:
 1. **Given** a newly started bridge, **When** initialization succeeds, **Then** it publishes connected status.
-2. **Given** authentication needs a verification code, **When** verification and startup succeed, **Then** it publishes connected status.
+2. **Given** a working verification-code authentication adapter, **When** verification and startup succeed, **Then** it publishes connected status.
 3. **Given** initial startup is incomplete, **When** an internal retry later succeeds, **Then** connected status updates without restarting the bridge.
 4. **Given** the active client is not initialized, replaced or destroyed, **When** a readiness notification arrives, **Then** it cannot publish a new connected status.
 
@@ -53,3 +53,5 @@ As a consumer that subscribes after startup, I need the most recently published 
 
 ## Assumptions
 The current dependency version remains unchanged. The existing health endpoint checks process liveness, not robot connectivity. The independent map-parser failure is documented separately. No frontend work, dependency upgrade, release or deployment is included.
+
+Implementation clarification approved by the user: dependency 3.40.2 removed the existing verification-code methods too. Their migration remains separate; verification-code scenarios prove bridge listener reuse with controlled auth fixtures only.

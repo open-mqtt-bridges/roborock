@@ -16,3 +16,6 @@ The production map path reports `u.parsedata is not a function`. This is a separ
 
 ## Tooling
 Spec Kit 1.3.2 is installed locally; this repository initially had no integration. Use bundled templates and Codex skills. No extensions, hooks or Git automation are configured. All material decisions are resolved by the approved plan.
+
+## Verification-code boundary discovered during implementation
+The installed 3.40.2 prototype also lacks sendTwoFactorEmail() and verifyTwoFactorCode(). The user explicitly chose to keep this fix scoped to connection indication and document the 2FA migration separately. Verification-code tests therefore provide explicit legacy-method fixtures and prove listener reuse in the existing bridge control flow only, not compatibility of real cloud authentication. The only actual dependency contract asserted here is readiness notification.
