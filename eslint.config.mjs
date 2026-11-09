@@ -3,7 +3,16 @@ import prettierPlugin from 'eslint-plugin-prettier';
 import tseslint from 'typescript-eslint';
 
 export default [
-  { ignores: ['**/.agents/**', '**/.specify/**', '**/node_modules/**', '**/dist/**', '**/coverage/**', '**/docs/.vitepress/**'] },
+  {
+    ignores: [
+      '**/.agents/**',
+      '**/.specify/**',
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/coverage/**',
+      '**/docs/.vitepress/**',
+    ],
+  },
   ...tseslint.configs.recommended,
   {
     plugins: { prettier: prettierPlugin },

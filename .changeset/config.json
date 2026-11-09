@@ -3,7 +3,7 @@
   "changelog": [
     "@changesets/changelog-github",
     {
-      "repo": "tobiaswaelde/roborock-mqtt-bridge"
+      "repo": "open-mqtt-bridges/roborock"
     }
   ],
   "commit": false,
