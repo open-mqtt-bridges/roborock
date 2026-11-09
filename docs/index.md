@@ -27,4 +27,4 @@ features:
 
 Every installation is defined in `config/config.yml`. Continue with [configuration](/configuration), [authentication](/authentication), or the [MQTT contract](/mqtt).
 
-For local WLED controllers in the same MQTT installation, see the [WLED MQTT Bridge documentation](https://tobiaswaelde.github.io/wled-mqtt-bridge/).
+For local WLED controllers in the same MQTT installation, see the [WLED MQTT Bridge documentation](https://open-mqtt-bridges.github.io/wled/).

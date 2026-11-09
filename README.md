@@ -1,12 +1,12 @@
 # Roborock MQTT Bridge
 
-[![CI](https://img.shields.io/github/actions/workflow/status/tobiaswaelde/roborock-mqtt-bridge/ci.yml?style=for-the-badge&label=CI)](https://github.com/tobiaswaelde/roborock-mqtt-bridge/actions/workflows/ci.yml)
-[![Docs](https://img.shields.io/github/actions/workflow/status/tobiaswaelde/roborock-mqtt-bridge/docs.yml?style=for-the-badge&label=Docs)](https://github.com/tobiaswaelde/roborock-mqtt-bridge/actions/workflows/docs.yml)
-[![Deploy](https://img.shields.io/github/actions/workflow/status/tobiaswaelde/roborock-mqtt-bridge/deploy.yml?style=for-the-badge&label=Deploy)](https://github.com/tobiaswaelde/roborock-mqtt-bridge/actions/workflows/deploy.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/open-mqtt-bridges/roborock/ci.yml?style=for-the-badge&label=CI)](https://github.com/open-mqtt-bridges/roborock/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/github/actions/workflow/status/open-mqtt-bridges/roborock/docs.yml?style=for-the-badge&label=Docs)](https://github.com/open-mqtt-bridges/roborock/actions/workflows/docs.yml)
+[![Deploy](https://img.shields.io/github/actions/workflow/status/open-mqtt-bridges/roborock/deploy.yml?style=for-the-badge&label=Deploy)](https://github.com/open-mqtt-bridges/roborock/actions/workflows/deploy.yml)
 
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-tobiaswaelde-FFDD00?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/tobiaswaelde)
 
-NestJS bridge between Roborock vacuum accounts and MQTT. Full documentation: [tobiaswaelde.github.io/roborock-mqtt-bridge](https://tobiaswaelde.github.io/roborock-mqtt-bridge/).
+NestJS bridge between Roborock vacuum accounts and MQTT. Full documentation: [open-mqtt-bridges.github.io/roborock](https://open-mqtt-bridges.github.io/roborock/).
 
 ## Quick start
 
@@ -45,14 +45,18 @@ mosquitto_pub -h mqtt.example.net -t 'home/roborock/home/devices/ROBOROCK-DUID/c
 
 ## Documentation
 
-- [Documentation home](https://tobiaswaelde.github.io/roborock-mqtt-bridge/)
-- [Configuration](https://tobiaswaelde.github.io/roborock-mqtt-bridge/configuration)
-- [Authentication](https://tobiaswaelde.github.io/roborock-mqtt-bridge/authentication)
-- [MQTT contract](https://tobiaswaelde.github.io/roborock-mqtt-bridge/mqtt)
-- [Enum values](https://tobiaswaelde.github.io/roborock-mqtt-bridge/enum-values)
-- [Docker deployment](https://tobiaswaelde.github.io/roborock-mqtt-bridge/deployment)
-- [WLED MQTT Bridge for local lighting](https://tobiaswaelde.github.io/wled-mqtt-bridge/)
+- [Documentation home](https://open-mqtt-bridges.github.io/roborock/)
+- [Configuration](https://open-mqtt-bridges.github.io/roborock/configuration)
+- [Authentication](https://open-mqtt-bridges.github.io/roborock/authentication)
+- [MQTT contract](https://open-mqtt-bridges.github.io/roborock/mqtt)
+- [Enum values](https://open-mqtt-bridges.github.io/roborock/enum-values)
+- [Docker deployment](https://open-mqtt-bridges.github.io/roborock/deployment)
+- [WLED MQTT Bridge for local lighting](https://open-mqtt-bridges.github.io/wled/)
 
 ## Development toolchain
 
 Use Node.js 26.13.0 LTS and the package manager pinned in `package.json`. Node-based application runtimes require Node.js 26. Builds use TypeScript 7; ESLint and compiler-API consumers use the TypeScript 6 compatibility package. Dependency overrides, where present, pin security fixes for transitive packages; validate tests and documentation builds when changing them.
+
+## Contributing
+
+See the [development guide](docs/development.md) for the pinned toolchain, checks and Spec Kit usage, and the [organization contribution guide](https://github.com/open-mqtt-bridges/.github/blob/main/CONTRIBUTING.md) for pull requests.

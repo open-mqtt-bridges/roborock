@@ -3,3 +3,8 @@ node_modules
 dist
 coverage
 config/config.yml
+
+# Contributor tooling is not part of the runtime build context.
+.agents
+.specify
+specs
