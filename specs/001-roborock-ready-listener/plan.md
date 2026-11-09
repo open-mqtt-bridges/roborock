@@ -26,3 +26,6 @@ T001 initializes Spec Kit using its installed 1.3.2 Codex skill integration with
 T002 first adds failing tests through the real bridge class using the current dependency contract. Register setReadyListener before starting, call startService() without arguments in both paths, add isInited() to handleConnected guards, and publish connection state with retain:true. Cover delayed recovery, 2FA, repeated readiness and stale/destroyed/uninitialized clients. Test actual installed prototype methods rather than trusting declarations. Verify late true/false reception using an isolated broker. Update documentation and add patch release metadata. Run pnpm lint, typecheck, test, build and docs:build, then inspect existing CI including its Docker build and process-health smoke test.
 
 No changes to health/readiness semantics beyond these notifications; no new Last Will, heartbeat, runtime outage detector, or map parsing fix.
+
+## Approved Implementation Clarification
+The installed dependency also removed the legacy 2FA methods. The user explicitly kept that migration outside this fix. Verification-code tests use explicit fixtures to prove listener reuse in existing bridge flow; they do not establish real cloud 2FA compatibility. This limitation is documented in troubleshooting and research.
