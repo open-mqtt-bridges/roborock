@@ -15,3 +15,7 @@ T1 records baseline/targets; T2 verifies security settings and scanner configura
 ## Validation
 
 Use documented local checks, clean immutable installs, relevant container/health checks and post-update audits. Rust requires format, Clippy, tests and release build plus RustSec. Website requires browser/mobile/keyboard verification. Existing failures and external limitations remain explicit. Details and actual results are recorded in `audit.md`.
+
+## Container version metadata
+
+Generate version.env from package.json while bundling. Copy only this metadata file beside the runtime bundle, and load it with the existing Node runtime using --env-file. Node preserves explicit environment overrides. Extend the existing CI container health smoke to compare the HTTP response version with package.json. Add and consume a patch changeset using the pinned CLI; ship the fix and generated patch version together after applicable checks. Verify the newly published immutable image digest and /health version with disabled synthetic instances.

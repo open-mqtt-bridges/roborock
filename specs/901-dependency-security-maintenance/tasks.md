@@ -20,3 +20,6 @@
 Execution follows the approved website-first repository order. Independent external metadata reads may run concurrently; commits remain scoped to tested implementation groups.
 
 T3/T4 share the Node dependency graph and are validated as one coherent compatibility update; independent Cargo and documentation groups receive separate commits. Current-head CI is recorded in the hosting PR and linked issue.
+
+- [x] T6 Generate container package-version metadata and make CI reject stale health versions; validate build/container/version response and commit.
+- [ ] T7 Generate patch release metadata, merge after current-head CI and verify published image health/version.

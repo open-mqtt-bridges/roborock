@@ -29,3 +29,7 @@ Feature context is local checkout state, not a branch-name convention. Preserve 
 ## Contributions and security
 
 Follow the [organization contribution guide](https://github.com/open-mqtt-bridges/.github/blob/main/CONTRIBUTING.md) and any local security policy. Never commit `.env`, runtime configuration, tokens or sessions. Use documented example placeholders. Preserve MQTT topics, payloads, command retention and existing deployment identifiers. A dependency upgrade, release, merge or deployment is a separate action from a Spec Kit step.
+
+## Container health version
+
+The container build derives version.env from package.json and Node loads it at startup. The /health version therefore matches the released package even when the image starts without a package manager. An explicit npm_package_version environment value retains precedence. CI compares the container HTTP health response against the manifest version.
