@@ -13,3 +13,7 @@ Issue: https://github.com/open-mqtt-bridges/roborock/issues/51
 Preserve MQTT topics, payloads, retention, configuration keys and deployment/package identifiers. Use existing package-manager and runtime pins. No prereleases, forced peer/engine acceptance, relaxed security rules, unrelated formatting, releases or deployments. Keep archived idm-energy untouched. TypeScript 7 requires compatible parser/lint/test peer ranges. Roborock 3.40.3 requires official Node 26 engine support. Preserve old feature specifications and the website logo branch.
 
 All adopted updates require clean immutable installation, applicable local checks and current-head CI. Fix actionable advisories; explicitly record unavailable security features, unresolved advisories and deferred targets. Merge approval remains separate.
+
+## Authorized release verification correction
+
+The user authorizes merging PRs, fixing discovered bugs and deploying new versions. Published container smoke tests found that /health reports a stale fallback version because direct Node execution does not set npm_package_version. The container must report its owning package version without changing the health response shape, existing environment overrides, MQTT contracts or image identifiers.

@@ -24,7 +24,9 @@ RUN pnpm install --frozen-lockfile=false
 
 # Build the production bundle and discard source maps from the runtime artifact.
 COPY . .
-RUN pnpm build && rm -f dist/*.map
+RUN pnpm build \
+    && node -e "require('node:fs').writeFileSync('version.env', 'npm_package_version=' + require('./package.json').version + '\n')" \
+    && rm -f dist/*.map
 
 # =============================================================================
 # Runtime stage
@@ -36,6 +38,7 @@ WORKDIR /app
 ENV NODE_ENV=production CONFIG_FILE=/app/config/config.yml
 
 COPY --from=build /app/dist ./dist
+COPY --from=build /app/version.env ./version.env
 COPY config/config.example.yml /app/config/config.example.yml
 
 # The mounted config and map directories stay writable by the unprivileged bridge user.
@@ -49,4 +52,4 @@ USER bridge
 # Node provides fetch natively; probe Nest's local liveness endpoint on the configured HTTP port.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 CMD node -e "fetch('http://127.0.0.1:' + (process.env.PORT ?? '3000') + '/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "--env-file=/app/version.env", "dist/index.js"]

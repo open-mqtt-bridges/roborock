@@ -17,7 +17,13 @@ jobs:
         run: |
           cp config/config.example.yml /tmp/config.yml
           docker run -d --name bridge-ci -e PORT=3000 -p 3000:3000 -v /tmp/config.yml:/app/config/config.yml:ro roborock-mqtt-bridge:ci
-          for _ in {1..20}; do curl --fail --silent http://127.0.0.1:3000/health && exit 0; sleep 1; done
+          VERSION="$(node -p 'require("./package.json").version')"
+          for _ in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:3000/health > /tmp/health.json; then
+              node -e 'const assert = require("node:assert/strict"); const health = require("/tmp/health.json"); assert.equal(health.status, "ok"); assert.equal(health.version, process.argv[1]);' "$VERSION" && exit 0
+            fi
+            sleep 1
+          done
           docker logs bridge-ci
           exit 1
       - name: Cleanup smoke container
