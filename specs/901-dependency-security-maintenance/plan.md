@@ -19,3 +19,7 @@ Use documented local checks, clean immutable installs, relevant container/health
 ## Container version metadata
 
 Generate version.env from package.json while bundling. Copy only this metadata file beside the runtime bundle, and load it with the existing Node runtime using --env-file. Node preserves explicit environment overrides. Extend the existing CI container health smoke to compare the HTTP response version with package.json. Add and consume a patch changeset using the pinned CLI; ship the fix and generated patch version together after applicable checks. Verify the newly published immutable image digest and /health version with disabled synthetic instances.
+
+## Roborock 3.40.3 release
+
+Rebase the dependency outcome onto current main through a merge preserving original PR #44 ancestry and all later fixes. Update the manifest and exact override together, regenerate the owning lockfile with pinned pnpm, run lint/typecheck/tests/build/docs and a real loopback MQTT broker regression under Node 26. Generate a patch release with Changesets, validate the candidate container and current-head CI, then merge #44 and verify the published version/image. Retain the documented upstream engine-support gap and absence of live-device testing.
