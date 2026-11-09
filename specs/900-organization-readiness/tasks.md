@@ -5,6 +5,8 @@
 - [x] T03: Complete scoped licensing, community and organization consistency fixes.
 - [x] T04: Repair and validate existing docs/Pages where applicable.
 - [x] T05: Organization-only deliverable; not applicable to this bridge.
-- [ ] T06: Run checks, record evidence and open PR without merging.
+- [x] T06: Run checks, record evidence and open PR without merging.
 
 Public deployment verification remains pending approved merges.
+
+Review: https://github.com/open-mqtt-bridges/roborock/pull/50. CI and merge approval remain separate; production deployment is pending merge.
