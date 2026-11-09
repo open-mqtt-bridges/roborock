@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1
+
+### Patch Changes
+
+- [#42](https://github.com/tobiaswaelde/roborock-mqtt-bridge/pull/42) [`651d790`](https://github.com/tobiaswaelde/roborock-mqtt-bridge/commit/651d7907b07b91e1282a42cc8af5919a4c32310e) Thanks [@tobiaswaelde](https://github.com/tobiaswaelde)! - Restore connection-state publications using the Roborock client's ready listener and retain the latest state for late MQTT subscribers.
+
 ## 1.0.0
 
 ### Major Changes
