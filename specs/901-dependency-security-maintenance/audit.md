@@ -56,3 +56,9 @@ PR: https://github.com/open-mqtt-bridges/roborock/pull/52; closes #51. Existing 
 ## Hosted CI evidence
 
 All reported checks on implementation head `1729d3dd2f928be6df82e89ad8ee0095d6edf81a` completed without failures at 2026-11-09T13:23:15.934296+00:00. Deployment jobs were intentionally skipped on the PR. CodeQL PR analysis completed for the supported source language. This final documentation-only task update follows that successful implementation verification; the current PR checks remain authoritative before merge.
+
+## Roborock 3.40.3: explicitly approved Node 26 support exception
+
+The user explicitly approved adopting 3.40.3 while retaining Node 26.13.0 after reviewing isolated checks. This supersedes the earlier 3.40.2 deferral. Upstream still declares Node 18/20/22/24; no official Node 26 support or live-device compatibility is claimed. The manifest and exact override both resolve 3.40.3. No force flag, disabled engine/peer/security check, runtime downgrade or source/registry substitution was used.
+
+Validation passed: pinned pnpm 11.28.9 isolated immutable installation, lint, tsc6 typecheck, all 31 tests including a real loopback MQTT broker, ncc build, documentation build, candidate Docker build and isolated HTTP health smoke. pnpm audit retains only the previously documented low-severity development-tooling deepmerge advisory; no moderate/high/critical findings. Release metadata is generated with Changesets for the next patch version.

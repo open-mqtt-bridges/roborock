@@ -23,3 +23,6 @@ T3/T4 share the Node dependency graph and are validated as one coherent compatib
 
 - [x] T6 Generate container package-version metadata and make CI reject stale health versions; validate build/container/version response and commit.
 - [ ] T7 Generate patch release metadata, merge after current-head CI and verify published image health/version.
+
+- [x] T8 Adopt explicitly approved Roborock 3.40.3 under Node 26, validate the lockfile, local checks and loopback broker regression, and commit.
+- [ ] T9 Generate the patch version, merge #44 after CI, and verify the release/image.
