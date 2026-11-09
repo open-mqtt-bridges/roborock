@@ -4,10 +4,10 @@ updates:
     directory: /
     schedule:
       interval: weekly
-  - package-ecosystem: npm
-    directory: /docs
-    schedule:
-      interval: weekly
+    groups:
+      nestjs:
+        patterns:
+          - '@nestjs/*'
   - package-ecosystem: docker
     directory: /
     schedule:
