@@ -34,6 +34,9 @@ RUN pnpm build \
 
 # Run only the compiled bridge and its example configuration in the final image.
 FROM node:26.13.0-bookworm-slim
+
+# Keep the package manager and its bundled dependencies out of the runtime.
+RUN rm -rf /usr/local/lib/node_modules/npm && rm -f /usr/local/bin/npm /usr/local/bin/npx
 WORKDIR /app
 ENV NODE_ENV=production CONFIG_FILE=/app/config/config.yml
 
