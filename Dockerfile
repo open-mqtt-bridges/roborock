@@ -3,7 +3,7 @@
 # =============================================================================
 
 # Bundle the application in a disposable build stage.
-FROM node:26.13.0-bookworm-slim AS build
+FROM node:26.13.1-bookworm-slim AS build
 WORKDIR /app
 
 # -----------------------------------------------------------------------------
@@ -33,7 +33,7 @@ RUN pnpm build \
 # =============================================================================
 
 # Run only the compiled bridge and its example configuration in the final image.
-FROM node:26.13.0-bookworm-slim
+FROM node:26.13.1-bookworm-slim
 
 # Keep the package manager and its bundled dependencies out of the runtime.
 RUN rm -rf /usr/local/lib/node_modules/npm && rm -f /usr/local/bin/npm /usr/local/bin/npx
