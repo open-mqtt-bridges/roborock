@@ -31,8 +31,10 @@ declare module 'homebridge-roborock-matter/roborockLib/roborockAPI' {
     app_start(duid: string, options?: Record<string, unknown>): Promise<void>;
     app_stop(duid: string, options?: Record<string, unknown>): Promise<void>;
     find_me(duid: string, options?: Record<string, unknown>): Promise<void>;
+    getMapListForDevice?(duid: string): Array<{ mapId: number; name: string }>;
     getStatus(duid: string, options?: { force?: boolean; preferCloud?: boolean }): Promise<void>;
     isInited(): boolean;
+    load_multi_map?(duid: string, mapId: number, options?: Record<string, unknown>): Promise<void>;
     sendTwoFactorEmail(): Promise<{ ok: boolean }>;
     setDeviceNotify(callback: (id: string, state: unknown) => void): void;
     setReadyListener(listener: () => unknown): void;

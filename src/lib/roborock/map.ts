@@ -22,6 +22,51 @@ export interface RoborockMapImage {
   width: number;
 }
 
+const RRMAP_IMAGE_BLOCK = 2;
+
+/** Extracts renderable pixel arrays directly from a classic RRMap v1 buffer. */
+export function parseMapImageBuffer(buf: Buffer): RoborockMapImage | undefined {
+  if (buf.length < 0x18 || buf[0x00] !== 0x72 || buf[0x01] !== 0x72) return;
+
+  const end = Math.min(buf.readUInt32LE(0x04), buf.length);
+  let pos = 0x14;
+  while (pos + 8 <= end) {
+    const type = buf.readUInt16LE(pos);
+    const hlength = buf.readUInt16LE(pos + 2);
+    const length = buf.readUInt32LE(pos + 4);
+    if (hlength < 8 || pos + hlength + length > buf.length) return;
+
+    if (type === RRMAP_IMAGE_BLOCK && hlength > 24) {
+      const height = buf.readInt32LE(pos + hlength - 8);
+      const width = buf.readInt32LE(pos + hlength - 4);
+      const pixelCount = width * height;
+      if (!Number.isSafeInteger(pixelCount) || width <= 0 || height <= 0 || pixelCount > MAX_MAP_PIXELS) return;
+      if (length < pixelCount) return;
+
+      const floor: number[] = [];
+      const obstacle: number[] = [];
+      const segments: number[] = [];
+      const pixelsAt = pos + hlength;
+      for (let i = 0; i < pixelCount; i++) {
+        const pixel = buf[pixelsAt + i];
+        if (pixel === 0x01) {
+          obstacle.push(i);
+        } else if (pixel === 0xff || pixel === 0x07) {
+          floor.push(i);
+        } else if ((pixel & 0x07) === 0x07) {
+          const segmentId = pixel >> 3;
+          segments.push(((segmentId << 21) | i) >>> 0);
+        }
+      }
+      return { floor, height, obstacle, segments, width };
+    }
+
+    pos += hlength + length;
+  }
+
+  return;
+}
+
 /** Renders a parsed Roborock floor-plan image as a PNG buffer. */
 export function renderMapImage(map: RoborockMapImage) {
   const pixelCount = map.width * map.height;
