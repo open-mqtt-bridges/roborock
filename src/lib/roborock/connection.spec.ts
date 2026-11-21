@@ -2,17 +2,31 @@ import { jest } from '@jest/globals';
 import { Roborock as RoborockClient } from 'homebridge-roborock-matter/roborockLib/roborockAPI';
 import type { MqttBridgeClient } from '~/modules/mqtt/mqtt.service';
 import type { RoborockConfig } from '~/types/config/roborock';
-import { Roborock } from './index';
+
+const mockLoginApi = { defaults: {} };
+const createLoginApi = jest.fn(() => mockLoginApi);
+const requestEmailCode = jest.fn<(...args: unknown[]) => Promise<void>>().mockResolvedValue(undefined);
+const signedLogin =
+  jest.fn<(...args: unknown[]) => Promise<{ code?: number; data?: Record<string, unknown>; msg?: string }>>();
+
+jest.unstable_mockModule('homebridge-roborock-matter/roborockLib/lib/roborockAuth', () => ({
+  createLoginApi,
+  requestEmailCode,
+  signedLogin,
+}));
+
+const { Roborock } = await import('./index');
 
 interface ConnectionInternals {
   client?: RoborockClient;
   connect(): Promise<void>;
   loadAuthentication(): Promise<undefined>;
+  persistAuthentication(data: Record<string, unknown>): Promise<void>;
   verifyTwoFactorCode(client: RoborockClient, code: string): Promise<void>;
 }
 
 describe('Roborock connection readiness', () => {
-  const bridges: Roborock[] = [];
+  const bridges: InstanceType<typeof Roborock>[] = [];
   const cfg: RoborockConfig = {
     baseUrl: 'example.invalid',
     email: 'robot@example.com',
@@ -29,6 +43,9 @@ describe('Roborock connection readiness', () => {
   afterEach(() => {
     for (const bridge of bridges.splice(0)) bridge.destroy();
     jest.restoreAllMocks();
+    createLoginApi.mockClear();
+    requestEmailCode.mockClear();
+    signedLogin.mockReset();
   });
 
   /** Uses the real client listener implementation without opening cloud connections. */
@@ -47,8 +64,8 @@ describe('Roborock connection readiness', () => {
     jest.spyOn(RoborockClient.prototype, 'isInited').mockImplementation(() => initialized);
     // The dependency removed these legacy auth methods too. These fixtures verify
     // only the bridge's existing verification flow, not the cloud auth contract.
-    const requestCode = jest.fn<RoborockClient['sendTwoFactorEmail']>().mockResolvedValue({ ok: true });
-    const verifyCode = jest.fn<RoborockClient['verifyTwoFactorCode']>().mockResolvedValue(undefined);
+    const requestCode = jest.fn<NonNullable<RoborockClient['sendTwoFactorEmail']>>().mockResolvedValue({ ok: true });
+    const verifyCode = jest.fn<NonNullable<RoborockClient['verifyTwoFactorCode']>>().mockResolvedValue(undefined);
     const start = jest.spyOn(RoborockClient.prototype, 'startService').mockImplementation(async function (
       this: RoborockClient,
     ) {
@@ -179,5 +196,51 @@ describe('Roborock connection readiness', () => {
     ready();
 
     expect(mqtt.publish).not.toHaveBeenCalled();
+  });
+
+  it('falls back to roborockAuth when legacy client 2FA methods are absent', async () => {
+    let initialized = false;
+    const mqtt = {
+      publish: jest.fn<MqttBridgeClient['publish']>(),
+      subscribe: jest.fn<MqttBridgeClient['subscribe']>(() => jest.fn()),
+    };
+    const bridge = new Roborock(cfg, mqtt);
+    bridges.push(bridge);
+    const internals = bridge as unknown as ConnectionInternals;
+    jest.spyOn(internals, 'loadAuthentication').mockResolvedValue(undefined);
+    const persistAuthentication = jest.spyOn(internals, 'persistAuthentication').mockResolvedValue(undefined);
+    jest.spyOn(RoborockClient.prototype, 'stopService').mockResolvedValue(undefined);
+    jest.spyOn(RoborockClient.prototype, 'isInited').mockImplementation(() => initialized);
+    jest.spyOn(RoborockClient.prototype, 'startService').mockImplementation(async function (this: RoborockClient) {
+      if (signedLogin.mock.calls.length) {
+        initialized = true;
+        (Reflect.get(this, 'notifyReady') as () => void).call(this);
+      }
+    });
+
+    await internals.connect();
+
+    expect(createLoginApi).toHaveBeenCalledWith({
+      baseURL: 'example.invalid',
+      clientID: expect.any(String),
+      language: 'en',
+      username: cfg.email,
+    });
+    expect(requestEmailCode).toHaveBeenCalledWith(mockLoginApi, cfg.email);
+    expect(mqtt.publish).toHaveBeenCalledWith(`${cfg.topic}/bridge/auth/status`, 'verification-code-sent');
+
+    const session = { token: 'roborock-token', uid: 'user-1' };
+    signedLogin.mockResolvedValueOnce({ code: 200, data: session });
+    await internals.verifyTwoFactorCode(internals.client!, '654321');
+
+    expect(signedLogin).toHaveBeenCalledWith(mockLoginApi, {
+      code: '654321',
+      customServer: true,
+      email: cfg.email,
+      server: 'example.invalid',
+    });
+    expect(persistAuthentication).toHaveBeenCalledWith(session);
+    expect(mqtt.publish).toHaveBeenCalledWith(`${cfg.topic}/bridge/auth/status`, 'authenticated');
+    expect(mqtt.publish).toHaveBeenCalledWith(connectedTopic, true, { retain: true });
   });
 });

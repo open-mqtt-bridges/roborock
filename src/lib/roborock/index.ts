@@ -1,5 +1,6 @@
+import { createLoginApi, requestEmailCode, signedLogin } from 'homebridge-roborock-matter/roborockLib/lib/roborockAuth';
 import { Roborock as RoborockClient, type RoborockState } from 'homebridge-roborock-matter/roborockLib/roborockAPI';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { chmod, mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { ENV } from '~/config/env';
@@ -51,6 +52,8 @@ export class Roborock extends HttpMqttBridge<RoborockConfig> {
     warn: 1,
   };
 
+  private readonly authClientId = randomUUID();
+  private baseUrl?: string;
   private client?: RoborockClient;
   private connectionRetryTimer?: NodeJS.Timeout;
   private destroyed = false;
@@ -96,6 +99,7 @@ export class Roborock extends HttpMqttBridge<RoborockConfig> {
       return;
     }
     if (this.destroyed) return;
+    this.baseUrl = baseURL;
 
     const session = await this.loadAuthentication();
     if (this.destroyed) return;
@@ -450,7 +454,12 @@ export class Roborock extends HttpMqttBridge<RoborockConfig> {
   /** Requests a Roborock e-mail verification code for the pending client session. */
   private async requestTwoFactorCode(client: RoborockClient) {
     try {
-      await client.sendTwoFactorEmail();
+      if (typeof client.sendTwoFactorEmail === 'function') {
+        await client.sendTwoFactorEmail();
+      } else {
+        const loginApi = this.buildLoginApi();
+        await requestEmailCode(loginApi, this.cfg.email);
+      }
       this.setAuthenticationStatus('verification-code-sent');
       this.logger.debug('Roborock verification code requested by email.');
     } catch (error) {
@@ -462,13 +471,42 @@ export class Roborock extends HttpMqttBridge<RoborockConfig> {
   /** Verifies a one-time code and resumes setup for the existing client. */
   private async verifyTwoFactorCode(client: RoborockClient, code: string) {
     try {
-      await client.verifyTwoFactorCode(code);
-      await client.startService();
-      this.setAuthenticationStatus(client.isInited() ? 'authenticated' : 'failed');
+      if (typeof client.verifyTwoFactorCode === 'function') {
+        await client.verifyTwoFactorCode(code);
+        await client.startService();
+        this.setAuthenticationStatus(client.isInited() ? 'authenticated' : 'failed');
+        return;
+      }
+
+      const baseURL = this.baseUrl ?? (await this.getBaseUrl()) ?? 'usiot.roborock.com';
+      const loginApi = this.buildLoginApi(baseURL);
+      const loginResult = await signedLogin(loginApi, {
+        code,
+        customServer: Boolean(this.cfg.baseUrl),
+        email: this.cfg.email,
+        server: baseURL,
+      });
+      if (loginResult?.code !== 200 || !loginResult.data) {
+        throw new Error(loginResult?.msg ?? 'Roborock verification failed.');
+      }
+
+      await this.persistAuthentication(loginResult.data);
+      await client.stopService().catch(() => undefined);
+      await this.connect();
+      this.setAuthenticationStatus(this.client?.isInited() ? 'authenticated' : 'failed');
     } catch (error) {
       this.setAuthenticationStatus('failed');
       this.logError('Roborock verification failed.', error);
     }
+  }
+
+  private buildLoginApi(baseURL = this.baseUrl ?? 'usiot.roborock.com') {
+    return createLoginApi({
+      baseURL,
+      clientID: this.authClientId,
+      language: 'en',
+      username: this.cfg.email,
+    });
   }
 
   /** Invokes an allowlisted vacuum command when the account is ready. */

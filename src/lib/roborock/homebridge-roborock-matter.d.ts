@@ -33,12 +33,36 @@ declare module 'homebridge-roborock-matter/roborockLib/roborockAPI' {
     find_me(duid: string, options?: Record<string, unknown>): Promise<void>;
     getStatus(duid: string, options?: { force?: boolean; preferCloud?: boolean }): Promise<void>;
     isInited(): boolean;
-    sendTwoFactorEmail(): Promise<{ ok: boolean }>;
+    sendTwoFactorEmail?(): Promise<{ ok: boolean }>;
     setDeviceNotify(callback: (id: string, state: unknown) => void): void;
     setReadyListener(listener: () => unknown): void;
     setStateAsync(id: string, state: RoborockState): Promise<void>;
     startService(): Promise<void>;
     stopService(): Promise<void>;
-    verifyTwoFactorCode(code: string): Promise<unknown>;
+    verifyTwoFactorCode?(code: string): Promise<unknown>;
   }
+}
+
+declare module 'homebridge-roborock-matter/roborockLib/lib/roborockAuth' {
+  export type RoborockLoginApi = Record<string, unknown>;
+
+  export function createLoginApi(options: {
+    baseURL: string;
+    clientID: string;
+    language?: string;
+    username: string;
+  }): RoborockLoginApi;
+
+  export function requestEmailCode(loginApi: RoborockLoginApi, email: string): Promise<unknown>;
+
+  export function signedLogin(
+    loginApi: RoborockLoginApi,
+    options: {
+      code?: string;
+      customServer?: boolean;
+      email: string;
+      password?: string;
+      server?: string;
+    },
+  ): Promise<{ code?: number; data?: Record<string, unknown>; msg?: string }>;
 }
